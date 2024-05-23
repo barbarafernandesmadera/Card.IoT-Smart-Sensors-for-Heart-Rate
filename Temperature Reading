@@ -1,0 +1,43 @@
+#include <MAX30105.h>
+#include <heartRate.h>
+#include <spo2_algorithm.h>
+ 
+#include <Wire.h>
+ 
+MAX30105 particleSensor;
+ 
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  Serial.println("Initializing...");
+ 
+  // Inicializar o sensor
+  if (particleSensor.begin(Wire, I2C_SPEED_FAST) == false) { // Usar porta I2C padrão, velocidade de 400kHz
+    Serial.println("MAX30102 não foi encontrado. Verifique a conexão/alimentação.");
+    while (1);
+  }
+ 
+  // Os LEDs têm consumo de energia muito baixo e não afetarão muito a leitura de temperatura, mas
+  // pode ser desejável desligar os LEDs para evitar qualquer aquecimento local
+  particleSensor.setup(0); // Configurar o sensor. Desligar LEDs
+ 
+  particleSensor.enableDIETEMPRDY(); // Habilitar a interrupção de leitura de temperatura. Isso é necessário.
+ 
+}
+ 
+void loop() {
+  // put your main code here, to run repeatedly:
+    float temperature = particleSensor.readTemperature();
+    Serial.print("temperatureC=");
+    Serial.println(temperature, 1);
+ 
+ 
+  float temperatureF = particleSensor.readTemperatureF();
+ 
+  Serial.print(" temperatureF=");
+  Serial.println(temperatureF, 4);
+ 
+ 
+ 
+  delay(1000);
+}
